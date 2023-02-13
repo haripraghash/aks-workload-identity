@@ -1,0 +1,27 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: example
+  namespace: example
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+          app: example
+    template:
+        metadata:
+          labels:
+              app: example
+              azure.workload.identity/use: "true"
+        spec:
+          serviceAccountName: example-sa
+          containers:
+          - name: api
+            image: haripraghash/dotnet-aks-workload-identity:1.2
+            ports:
+            - containerPort: 80
+            env:
+            - name: ConnectionStrings__DefaultConnection
+              value: "Server=xxx.database.windows.net; Authentication=Active Directory Managed Identity; Encrypt=True;  Database=xxx"
+          nodeSelector:
+            kubernetes.io/os: linux
